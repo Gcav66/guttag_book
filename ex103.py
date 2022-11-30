@@ -80,14 +80,14 @@ class Politician(Person):
         else:
             return True
 
-p1 = Politician("TJ", "Democrat")
-p2 = Politician("JM", "Democrat")
-p3 = Politician("AH", "Federalist")
-p4 = Politician("NP")
+#p1 = Politician("TJ", "Democrat")
+#p2 = Politician("JM", "Democrat")
+#p3 = Politician("AH", "Federalist")
+#p4 = Politician("NP")
 
-print("p1 to p2", p1.might_agree(p2))
-print("p1 to p4", p1.might_agree(p4))
-print("p1 to p3", p1.might_agree(p3))
+#print("p1 to p2", p1.might_agree(p2))
+#print("p1 to p4", p1.might_agree(p4))
+#print("p1 to p3", p1.might_agree(p3))
 
 class Student(MIT_person):
     pass
@@ -116,9 +116,9 @@ class Dog:
     def __init__(self, name):
         self._name = name
 
-class Grades():
+class Grades:
 
-    def __init__self(self):
+    def __init__(self):
         """Create empty grade book"""
         self._students = []
         self._grades = {}
@@ -127,13 +127,78 @@ class Grades():
     def add_student(self, student):
         """Assumes: student is of type Student
            Add student to the grade book"""
-        pass
+        if student in self._students:
+            raise ValueError('Duplicate student')
+        self._students.append(student)
+        self._grades[student.get_id_num()] = []
+        self._is_sorted = False
 
     def add_grade(self, student, grade):
-        pass
+        """Assumes: grade is a float
+           Add grade to the list of grades for student"""
+        try:
+            print(student.get_id_num())
+            self._grades[student.get_id_num()].append(grade)
+        except:
+            raise ValueError('Student not in mapping')
 
     def get_grades(self, student):
-        pass
+        """Return a list of grades for student"""
+        try:
+            print (student.get_id_num())
+            return self._grades[student.get_id_num()][:]
+        except:
+            raise ValueError('Student not in mapping')
 
     def get_students(self):
-        pass
+        """Return a sorted list of the students in the grade book"""
+        #if not self._is_sorted:
+        #    self.students.sort()
+        #    self._is_sorted = True
+        #return self.students[:]
+        if not self._is_sorted:
+            self._students.sort()
+            self._is_sorted = True
+        for s in self._students:
+            yield s
+
+def grade_report(course):
+    """Assumes course is of type Grades"""
+    report = ''
+    for s in course.get_students():
+        tot = 0.0
+        num_grades = 0
+        for g in course.get_grades(s):
+            tot += g
+            num_grades += 1
+        try:
+            average = tot/num_grades
+            print(average)
+            report = f"{report}\n{s}'s mean grade is {average}"
+        except ZeroDivisionError:
+            report = f"{report}\n{s} has no grades"
+    return report
+
+
+ug1 = UG('Jane Doe', 2021)
+ug2 = UG('Pierce Addison', 2041)
+ug3 = UG('David Henry', 2003)
+g1 = Grad("Bill Buckner")
+g2 = Grad("Bucky F. Dent")
+six_hundred = Grades()
+six_hundred.add_student(ug1)
+six_hundred.add_student(ug2)
+six_hundred.add_student(g1)
+six_hundred.add_student(g2)
+for s in six_hundred.get_students():
+    six_hundred.add_grade(s, 75)
+six_hundred.add_grade(g1, 25)
+six_hundred.add_grade(g2, 100)
+six_hundred.add_student(ug3)
+print(grade_report(six_hundred))
+
+book = Grades()
+book.add_student(Grad('Julie'))
+book.add_student(Grad('Lisa'))
+for s in book.get_students():
+    print(s)
